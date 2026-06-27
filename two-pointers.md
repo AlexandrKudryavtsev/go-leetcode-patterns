@@ -267,6 +267,72 @@ func moveZeroes(nums []int) {
 }
 ```
 
+### [Valid Palindrome](https://leetcode.com/problems/valid-palindrome)
+
+Проверить, что строчка палиндром, проверять надо только цифры и буквы.
+
+Почему это похоже на `two pointers`:
+
+- палиндром удобно проверять с двух концов
+- нужно сравнивать левый и правый значимые символы
+- не нужно заранее собирать очищенную строку
+
+Это форма `left/right`:
+
+- `left` ищет следующий значимый символ слева
+- `right` ищет следующий значимый символ справа
+- уже гарантированно правильно: все значимые пары за пределами `[left, right]` уже совпали
+
+Как прийти к решению:
+
+1. Не нужно через отдельный цикл собирать строчку только из цифр и букв.
+2. Вместо этого перед проверкой на равенство смотрим, что знак `left` или `right` - цифра или буква.
+3. Если проверяемый элемент не цифра и буква, то двигаем указатель и пропускаем попытку.
+4. Если есть хотя бы не совпадение `s[left]` и `s[right]` - возвращаем `false`.
+5. Если цикл закончился, то это означает что строчка палиндром.
+
+Что важно запомнить:
+
+> Сначала доводим оба указателя до букв/цифр, потом сравниваем символы без учета регистра.
+
+Сложность: `O(n)` time, `O(1)` space.
+
+```go
+func isAlphanumeric(c byte) bool {
+	return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')
+}
+
+func toLower(c byte) byte {
+	if 'A' <= c && c <= 'Z' {
+		return c + ('a' - 'A')
+	}
+	return c
+}
+
+func isPalindrome(s string) bool {
+	left, right := 0, len(s)-1
+
+	for left < right {
+		for left < right && !isAlphanumeric(s[left]) {
+			left++
+		}
+
+		for left < right && !isAlphanumeric(s[right]) {
+			right--
+		}
+
+		if toLower(s[left]) != toLower(s[right]) {
+			return false
+		}
+
+		left++
+		right--
+	}
+
+	return true
+}
+```
+
 ### [Is Subsequence](https://leetcode.com/problems/is-subsequence)
 
 Нужно проверить, встречается ли `source` внутри `target` в том же порядке.
